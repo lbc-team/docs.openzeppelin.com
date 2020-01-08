@@ -1,5 +1,5 @@
 name: openzeppelin
-title: OpenZeppelin
+title: Home
 version: master
 nav:
   - modules/ROOT/nav.adoc
