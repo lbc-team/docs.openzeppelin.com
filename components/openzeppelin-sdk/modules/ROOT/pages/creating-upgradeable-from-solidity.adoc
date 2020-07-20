@@ -1,28 +1,28 @@
-= Creating Upgradeable Contracts From Solidity
+= 创建可升级的Solidity智能合约
 
-The xref:cli::index.adoc[*OpenZeppelin CLI*] lets you create upgradable contracts from the command line, and you can also use Upgrades directly from JavaScript, but there is a third use case: creating an upgradable contract directly from another contract.
+*OpenZeppelin CLI* 允许你用命令行的方式升级智能合约，你也可以直接使用JavaScript来升级，但还有第三种用法：直接从其他合约创建一个新的可升级合约。
 
-In this guide, we will learn how to create a contract https://en.wikipedia.org/wiki/Factory_(object-oriented_programming)[factory] where the resulting contracts are themselves upgradeable.
+在本指南中，我们将要学习如何创建一个合约 https://en.wikipedia.org/wiki/Factory_(object-oriented_programming)[工厂] ，工厂中生产出的合约就可以升级。
 
 [NOTE]
 ====
-This guide features advanced usage of OpenZeppelin tools, and requires familiarity with Solidity, development blockchains and the OpenZeppelin CLI.
+这个指南中使用了OpenZeppelin工具的高级用法，同时要求用户熟悉Solidity，区块链的开发和OpenZeppelin CLI。
 
-For a refresher on the topics, head to xref:learn::deploying-and-interacting.adoc[Deploying and Interacting With Smart Contracts].
+如果想要复习这个主题，可以参考智能合约的部署和交互。
 ====
 
-== Setting Up
+== 配置
 
-Start by xref:cli::getting-started.adoc#setting-up-your-project[initializing an OpenZeppelin project] using the CLI:
+首先使用CLI来初始化OpenZeppelin项目
 
 [source,console]
 ----
 $ npx oz init creating-from-solidity 1.0.0
 ----
 
-The project name is important: we'll be using it later from the Solidity code.
+项目的名称非常重要，因为我们将会在接下来的Solidity代码中用到。
 
-We can now write the code for `Product`, a simple contract that stores a value. This is the contract that will be created by our contract factory.
+接下来我们可以编写 `Product` 的代码，它是一个用来存储变量的简单合约。 `Product` 合约就是我们的合约工厂将要创建的合约。
 
 [source,solidity]
 ----
@@ -42,7 +42,7 @@ contract Product is Initializable {
 }
 ----
 
-The `Factory` is a bit more involved: we'll provide it with our project's xref:cli::contracts-architecture.adoc#app.sol[`App`] contract, and use it to create new upgradeable instances of `Product`. This is where your project's name comes into play: you'll need to provide this information to `App`:
+这里需要 `Factory` 参与进来：我们将要把项目中的 `App` 合约提供给它，并且用它来创建新的可升级的 `Product` 合约的实例。这里就是项目名称用到的地方：你需要把项目名称提供给 `App` 合约：
 
 [source,solidity]
 ----
@@ -77,11 +77,11 @@ contract Factory is Initializable {
 }
 ----
 
-== Connecting Our Factory to the App
+== 把工厂和App连接起来
 
-The `Factory` 's `initialize` method requires that we provide the address of our xref:cli::contracts-architecture.adoc#app.sol[`App`]. The `App` is an on-chain representation of your project, and must be published explicitly for us to use it this way.
+我们需要将 `App` 的地址提供给 `Factory` 的 `initialize` 方法。`App` 是你的项目在链上的表示形式，所以必须像这样明确的发布出来以便于我们使用。
 
-To do this, we'll first need to `add` the `Product` contract to our `App` (so that it can deploy new ones), `push` or deploy the underlying contracts, and finally `publish` the whole project to the blockchain
+要做到这一点，我们首先需要将 `Product` 合约 `add` 到我们的 `App` 中（这样的话就可以部署新的合约），接下来 `push` 或者部署基本合约，最终将整个项目 `publish` 到区块链上。
 
 [source,console]
 ----
@@ -100,7 +100,7 @@ $ npx oz publish
 ✓ Published to dev-1591071938836!
 ----
 
-Now that the `App` has been published and `Product` registered inside it, we're ready to use it! Head to your project's xref:cli::configuration.adoc#network.json[network configuration file] and look for the `app` entry:
+现在 `App` 已经发布好了，并且 `Product` 也在 `App` 中注册了。我们就可以使用它了！进入到你的项目的网络配置文件，然后找到 `App` 这一项：
 
 ```json
 // .openzeppelin/dev-1591071938836.json
@@ -111,7 +111,7 @@ Now that the `App` has been published and `Product` registered inside it, we're 
   ...
 ```
 
-With the `App` address at hand, we can deploy `Factory` using `oz deploy` as usual:
+拿到 `App` 的地址后，我们可以使用 `oz deploy` 来部署 `Factory` 合约：
 
 [source,console]
 ----
@@ -133,11 +133,11 @@ To upgrade this instance run 'oz upgrade'
 ----
 
 [encoding-call-data]
-== Encoding Call Data
+== 编译调用数据
 
-Our `Factory` is ready for its `createInstance` method to be called, but there's still something missing: `Product` 's initialization data.
+我们的 `Factory` 合约中的 `createInstance` 方法已经可以正常使用了，但是还有一些遗漏： `Product` 的初始化数据。
 
-Recall that `Product` has an `initialize` method: when creating a new one, we need to make sure it is called with the right arguments.
+回想一下 `Product` 有一个 `initialize` 方法：当创建一个新的合约时，我们需要确保调用时传入正确的参数。
 
 [source,solidity]
 ----
@@ -149,9 +149,9 @@ Recall that `Product` has an `initialize` method: when creating a new one, we ne
     ...
 ----
 
-OpenZeppelin Upgrades provides a JavaScript utility function just for this sort of thing: `encodeCall`. It receives a method name, an array of argument types and an array of argument values, and outputs the call data that corresponds to that method invocation.
+OpenZeppelin升级提供了JavaScript功能函数用于： `encodeCall` 。它接收一个方法名，一个存放参数类型的数组和一个存放参数的数组，并根据方法的调用输出相关的数据。
 
-Let's generate the call data for an initialization with the number 42:
+让我们使用42这个数字来进行初始化并得到调用数据：
 
 [source,console]
 ----
@@ -161,9 +161,9 @@ $ node
 '0xfe4b84df000000000000000000000000000000000000000000000000000000000000002a'
 ----
 
-== Creating the Instance contract
+== 创建实例合约
 
-With the call data <<encoding-call-data, we just generated>> we're finally ready to use `Factory` to create a new `Product`.
+使用 <<encoding-call-data, 我们刚才生成的>> 调用数据我们就可以使用 `Factory` 来创建一个新的 `Product` 。
 
 [source,console]
 ----
@@ -177,4 +177,4 @@ Events emitted:
  - InstanceCreated(0x3c63250aFA2470359482d98749f2d60D2971c818)
 ----
 
-We have now created a new upgradeable `Product` contract from our `Factory` contract! Note that the data provided to `createInstance` is the one we generated using `encodeCall`.
+我们现在就使用 `Factory` 合约创建了一个新的可升级合约 `Product` ！要注意的是，提供给 `createInstance` 的数据是我们使用 `encodeCall` 生成的。
