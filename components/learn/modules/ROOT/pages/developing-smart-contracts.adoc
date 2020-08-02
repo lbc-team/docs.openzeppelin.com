@@ -1,31 +1,31 @@
-= Developing Smart Contracts
+= 开发智能合约
 
-Welcome to the exciting world of smart contract development! This guide will let you get started writing Solidity contracts by going over the following:
+欢迎来到激动人心的智能合约开发世界！这个指南将会带领你开始使用Solidity编写智能合约，接下来你将会了解以下内容：
 
- * <<setting-up-a-solidity-project, Setting up a Solidity Project>>
- * <<compiling-solidity-source-code, Compiling Solidity Source Code>>
- * <<adding-more-contracts, Adding More Contracts>>
- * <<using-openzeppelin-contracts, Using the OpenZeppelin Contracts library>>
+ * <<setting-up-a-solidity-project, 建立一个智能合约项目>>
+ * <<compiling-solidity-source-code, 编译Solidity源代码>>
+ * <<adding-more-contracts, 添加更多合约>>
+ * <<using-openzeppelin-contracts, 使用OpenZeppelin合约库>>
 
-=== About Solidity
+=== 关于Solidity
 
-We won't cover language concepts such as syntax or keywords in this guide. For that, you'll want to check out the following curated content, which feature great learning resources for both newcomers and experienced developers:
+在本指南中，我们不会介绍Solidity语言的概念，例如语法或关键字。你可以通过查看以下内容来了解Solidity语言，这些内容对新手和有经验的开发人员来说都是很好的学习资源：
 
- * For a general overview of how Ethereum and smart contracts work, the official website hosts a https://ethereum.org/learn/[Learn about Ethereum] section with lots of beginner-friendly content.
- * If you're new to the language, the https://solidity.readthedocs.io/en/latest/introduction-to-smart-contracts.html[official Solidity documentation] is a good resource to have handy. Take a look at their https://solidity.readthedocs.io/en/latest/security-considerations.html[security recommendations], which nicely go over the differences between blockchains and traditional software platforms.
- * These https://consensys.github.io/smart-contract-best-practices/[best practices] are quite extensive, and include both https://consensys.github.io/smart-contract-best-practices/recommendations/[proven patterns] to learn from and https://consensys.github.io/smart-contract-best-practices/known_attacks/[known pitfalls] to avoid.
- * The https://solidity-05.ethernaut.openzeppelin.com/[Ethernaut] web-based game will have you look for subtle vulnerabilities in smart contracts as you advance through levels of increasing difficulty.
+ * 想要对以太坊和智能合约有一个总体的了解, 在以太坊的官方网站 https://ethereum.org/learn/[学习Ethereum] 中有很多对新手友好的内容.
+ * 如果你刚接触Solidity,  https://solidity.readthedocs.io/en/latest/introduction-to-smart-contracts.html[Solidity官方文档] 是一个好用的资源. 阅读他们的 https://solidity.readthedocs.io/en/latest/security-considerations.html[安全考量], 就可以很好地了解区块链和传统软件平台之间的差异.
+ * https://consensys.github.io/smart-contract-best-practices/[最佳实践] 的内容非常广泛, 可以学习到 https://consensys.github.io/smart-contract-best-practices/recommendations/[经过验证的模式] 和 https://consensys.github.io/smart-contract-best-practices/known_attacks/[已知陷阱] .
+ * https://solidity-05.ethernaut.openzeppelin.com/[Ethernaut] 是一个基于网页的游戏，你可以在里面寻找智能合约中的漏洞，游戏的难度也会随之增加。
 
-With that out of the way, let's get started!
+了解了这些，下面我们就开始吧！
 
 [[setting-up-a-solidity-project]]
-== Setting up a Solidity Project
+== 建立一个智能合约项目
 
-The first step in any project is to create a `contracts` directory, which is where we will store our Solidity source files (`.sol`). This is equivalent to the `src` directory you may be familiar with from other languages.
+建立项目的第一步就是创建一个 `contracts` 目录, 在目录中存放我们的Solidity源代码 (`.sol`)。就像是使用其他你可能熟悉的语言时的 `src` 目录一样。 
 
-We can now write our first simple smart contract, called `Box`: it will let people store a value that can be later retrieved.
+我们就可以编写我们的第一个简单的智能合约了，命名为 `Box` ：这个合约可以允许用户存入一个值并且可以取出。
 
-We will save this file as `contracts/Box.sol`. Each `.sol` file should have the code for a single contract, and be named after it.
+我们将这个合约保存为 `contracts/Box.sol` 。每一个 `.sol` 文件都应该有独立合约的代码并且以它命名。
 
 ```solidity
 // contracts/Box.sol
@@ -36,16 +36,16 @@ pragma solidity ^0.6.0;
 contract Box {
     uint256 private value;
 
-    // Emitted when the stored value changes
+    // 当存储的value变化时弹出
     event ValueChanged(uint256 newValue);
 
-    // Stores a new value in the contract
+    // 在合约中存入新的value
     function store(uint256 newValue) public {
         value = newValue;
         emit ValueChanged(newValue);
     }
 
-    // Reads the last stored value
+    // 读取最新的value
     function retrieve() public view returns (uint256) {
         return value;
     }
@@ -53,46 +53,46 @@ contract Box {
 ```
 
 [[compiling-solidity-source-code]]
-== Compiling Solidity Source Code
+== 编译Solidity源代码
 
-The Ethereum Virtual Machine (EVM) cannot execute Solidity code directly: we first need to compile it into EVM bytecode.
+以太坊虚拟机 (EVM) 可以运行Solidity代码：我们首先需要将它编译为EVM字节码。
 
-To do so, we'll use the xref:cli::index.adoc[*OpenZeppelin command-line interface (CLI)*]:
+我们将会使用到 xref:cli::index.adoc[*OpenZeppelin 命令行接口 (CLI)*]:
 
 ```console
 $ npm install --save-dev @openzeppelin/cli
 ```
 
-The CLI is quite powerful, and it is the entry point to many exciting features (such as upgradeable smart contracts and interactive transactions!). We will come back to it often.
+CLI功能非常强大，并拥有很多令人激动的功能（例如升级智能合约和交互式交易）。我们会经常使用到它。
 
-For now however, let's focus on compiling. This can be achieved by running a single command:
+现在还是让我们专注于编译吧。编译可以通过运行单个命令来实现：
 
 ```console
 $ npx oz compile
 ```
 
-NOTE: If you're unfamiliar with the `npx` command, check out our xref:setting-up-a-node-project.adoc#using-npx[Node project setup guide].
+NOTE: 如果你不熟悉 `npx` 命令, 查看 xref:setting-up-a-node-project.adoc#using-npx[建立Node项目指南].
 
-The `compile` command will automatically look for all contracts in the `contracts` directory, and compile them using the Solidity compiler version that best suits your project.
+`compile` 命令将会自动寻找 `contracts` 目录下的所有合约，并用适合合约的Solidity版本编译器编译它们。
 
-You will notice a `build/contracts` directory was created: it holds the compiled artifacts (bytecode and metadata), which are `.json` files. It's a good idea to add this directory to your `.gitignore`.
+你将会发现新建了 `build/contracts` 目录：里面保存了编译后的文件（字节码和数据），都是 `.json` 格式的文件。最好将这个目录增加到你的 `.gitignore` 中。
 
-You can also configure your compilation, which includes choosing a compiler version and enabling optimizations, by passing arguments to the `compile` command:
+你还可以通过将参数传递给 `compile` 命令来配置编译，包括选择编译器版本和启用优化：
 
 ```console
 $ npx oz compile --solc-version=0.6.7 --optimizer on
 ```
 
-For detailed information on these options, refer to xref:cli::compiling.adoc[Compiling With the CLI].
+如果想要了解这些选项的细节，可以参考 xref:cli::compiling.adoc[使用CLI进行编译]。
 
 [[adding-more-contracts]]
-== Adding More Contracts
+== 添加更多合约
 
-As your project grows, you will begin to create more contracts that interact with each other: each one should be stored in its own `.sol` file.
+随着项目的发展，你将创建更多相互交互的合约：每个合约都应存储在自己的.sol文件中。
 
-To see how this looks, let's add a simple access control system to our `Box` contract: we will store an administrator address in a contract called `Auth`, and only let `Box` be used by those accounts that `Auth` allows.
-
-Because the compiler will pick up all files in the `contracts` directory and subdirectories, you are free to organize your code as you see fit. Here, we'll store the `Auth` contract in an `access-control` subdirectory:
+要理解它是什么样的，让我们在 `Box` 合约中添加一个简单的访问控制系统：我们将在合约中存储管理员地址 `Auth` ，并且仅允许 `Box` 被那些经过 `Auth` 允许使用的帐户使用。
+ 
+由于编译器将识别 `contracts` 目录和子目录中的所有文件，因此你可以随意地组织自己认为合适的代码。在这里，我们将 `Auth` 合约存储在一个 `access-control` 子目录中：
 
 [[auth-contract]]
 ```solidity
@@ -105,7 +105,7 @@ contract Auth {
     address private administrator;
 
     constructor() public {
-        // Make the deployer of the contract the administrator
+        // 使合约的发布者成为合约的管理员
         administrator = msg.sender;
     }
 
@@ -114,15 +114,14 @@ contract Auth {
     }
 }
 ```
-
-To use this contract from `Box` we use an `import` statement, referring to `Auth` by its relative path:
+为了在 `Box` 合约中使用它，我们使用import语句引用 `Auth` 的相对路径：
 
 ```solidity
 // contracts/Box.sol
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.6.0;
 
-// Import Auth from the access-control subdirectory
+// 从access-control子目录引入Auth
 import "./access-control/Auth.sol";
 
 
@@ -137,7 +136,7 @@ contract Box {
     }
 
     function store(uint256 newValue) public {
-        // Require that the caller is registered as an administrator in Auth
+        // 要求调用者时Auth合约的管理员
         require(auth.isAdministrator(msg.sender), "Unauthorized");
 
         value = newValue;
@@ -149,36 +148,34 @@ contract Box {
     }
 }
 ```
+让合约保持简单的一个很好的方式就是将关键功能分到多个合约中，这是一个好习惯。
 
-Separating concerns across multiple contracts is a great way to keep each one simple, and is generally a good practice.
-
-However, this is not the only way to split your code into modules. You can also use _inheritance_ for encapsulation and code reuse in Solidity, as we'll see next.
+但是这并不是将代码模块化的唯一方式。你也可以在Solidity中使用继承进行代码封装和重用，我们接下来将会学到这些。
 
 [[using-openzeppelin-contracts]]
-== Using the OpenZeppelin Contracts Library
+== 使用OpenZeppelin合约库
 
-Reusable modules and libraries are the cornerstone of great software. The xref:contracts::index.adoc[*OpenZeppelin Contracts*] library contains lots of useful building blocks for smart contracts to build on. And you can rest easy when building on them: they've been the subject of multiple audits, with their security and correctness battle-tested.
+可重用的模型和库是伟大软件的基础。xref:contracts::index.adoc[*OpenZeppelin合约*] 库包含了大量对智能合约开发有用的模块。你可以放心的使用它们：它们已经过多次审核，并且经过了安全性和正确性的测试。
 
-=== About Inheritance
+=== 关于继承
 
-Many of the contracts in the library are not standalone, that is, you're not expected to deploy them as-is. Instead, you will use them to _augment_ your own contracts by adding features to them. Solidity provides _multiple inheritance_ as a mechanism to achieve this: take a look at the https://solidity.readthedocs.io/en/latest/contracts.html#inheritance[official documentation] to learn about the details behind it.
+库中的许多合约都不是独立的，也就是说，你不能直接部署它们。而应该是通过向其添加功能来丰富自己的合约。Solidity提供了多重继承的机制来解决这个问题：可以查看 https://solidity.readthedocs.io/en/latest/contracts.html#inheritance[官方文档] 来了解其中的细节。
 
+例如， xref:contracts:api:ownership.adoc#Ownable[`Ownable`] 合约将部署者的帐户标记为合约的所有者，并提供了一个名为 `onlyOwner` 的修饰符。当应用到某个函数时，onlyOwner将回退所有非所有者账户的函数调用。还提供 xref:contracts:api:ownership.adoc#Ownable-transferOwnership-address-[转账] 和 xref:contracts:api:ownership.adoc#Ownable-renounceOwnership--[放弃] 所有权的功能。
 
-For example, the xref:contracts:api:ownership.adoc#Ownable[`Ownable`] contract marks the deployer account as the contract's owner, and provides a modifier called `onlyOwner`. When applied to a function, `onlyOwner` will cause all function calls that do not originate from the owner account to revert. Functions to xref:contracts:api:ownership.adoc#Ownable-transferOwnership-address-[transfer] and xref:contracts:api:ownership.adoc#Ownable-renounceOwnership--[renounce] ownership are also available.
+使用这种方法，继承将成为一种强大的模块化机制，你可以不用被迫部署和管理多个合约。
 
-When used this way, inheritance becomes a powerful mechanism that allows for modularization, without forcing you to deploy and manage multiple contracts.
+=== 引入OpenZeppelin合约
 
-=== Importing OpenZeppelin Contracts
-
-The latest published release of the OpenZeppelin Contracts library can be downloaded by running:
+可以通过运行以下命令来下载最新版本的OpenZeppelin合约库：
 
 ```console
 $ npm install --save-dev @openzeppelin/contracts
 ```
 
-NOTE: You should always use the library from these published releases: copy-pasting library source code into your project is a dangerous practice that makes it very easy to introduce security vulnerabilities in your contracts.
+NOTE: 你应当使用已经发布的库：在项目中直接复制粘贴库中的源代码是一个危险的操作，有可能会给你的合约引入安全漏洞。
 
-To use one of the OpenZeppelin Contracts, `import` it by prefixing its path with `@openzeppelin/contracts`. For example, in order to replace our own <<auth-contract, `Auth`>> contract, we will import `@openzeppelin/contracts/access/Ownable.sol` to add access control to `Box`:
+想要使用OpenZeppelin的合约时，你需要使用 `import` 命令并加上 `@openzeppelin/contracts` 前缀。例如，为了代替我们的 <<auth-contract, `Auth`>> 合约，我们需要引入 `@openzeppelin/contracts/access/Ownable.sol` 来为 `Box` 增加访问控制：
 
 [[box-contract]]
 ```solidity
@@ -186,17 +183,17 @@ To use one of the OpenZeppelin Contracts, `import` it by prefixing its path with
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.6.0;
 
-// Import Ownable from the OpenZeppelin Contracts library
+// 从OpenZeppelin合约库引入Ownable合约
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 
-// Make Box inherit from the Ownable contract
+// 使Box继承Ownable合约
 contract Box is Ownable {
     uint256 private value;
 
     event ValueChanged(uint256 newValue);
 
-    // The onlyOwner modifier restricts who can call the store function
+    // onlyOwner修饰符限制了调用store的账户
     function store(uint256 newValue) public onlyOwner {
         value = newValue;
         emit ValueChanged(newValue);
@@ -208,12 +205,12 @@ contract Box is Ownable {
 }
 ```
 
-The xref:contracts::index.adoc[OpenZeppelin Contracts documentation] is a great place to learn about developing secure smart contract systems. It features both guides and a detailed API reference: see for example the xref:contracts::access-control.adoc[Access Control] guide to know more about the `Ownable` contract used in the code sample above.
+xref:contracts::index.adoc[OpenZeppelin合约官方文档] 是一个学习开发安全智能合约系统的优秀指南。它包含了指导和API依赖的细节：你可以通过阅读 xref:contracts::access-control.adoc[访问控制] 这个例子来了解更多关于刚才使用到 `Ownable` 合约的细节。
 
-== Next Steps
+== 下一步
 
-Writing and compiling Solidity contracts are but the first steps in the journey to having your decentralized application running on the Ethereum network. Once you are comfortable with this setup, you'll want to move on to more advanced tasks:
+想要你的去中心化应用运行在以太坊上，编写和编译智能合约是第一步。如果你喜欢这个开始，那么就继续进一步的任务：
 
- * xref:deploying-and-interacting.adoc[Deploying and Interacting]
- * xref:writing-automated-tests.adoc[Writing Automated Tests]
- * xref:connecting-to-public-test-networks.adoc[Connecting to Public Test Networks]
+ * xref:deploying-and-interacting.adoc[发布和交互]
+ * xref:writing-automated-tests.adoc[编写自动化测试]
+ * xref:connecting-to-public-test-networks.adoc[连接公网]
