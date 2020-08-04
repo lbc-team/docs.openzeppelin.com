@@ -20,7 +20,7 @@
 如果不能升级合约，你需要做下面的工作来修复一个合约中的问题：
 
 . 部署一个新版本合约
-. 手工将所有状态从老合约迁移到新合约（由于 gas 费的原因，这个操作有可能想当昂贵）
+. 手工将所有状态从老合约迁移到新合约（由于 gas 费的原因，这个操作有可能相当昂贵）
 . 更新所有与老合约进行交互的合约来使用新的合约地址
 . 与你的用户联系并说服他们使用新部署的合约（由于用户的迁移总是很缓慢，你可能要处理两个合约同时使用的情况）
 
@@ -295,8 +295,6 @@ NOTE: 在未来的版本中，OpenZeppelin CLI 会自动将构造函数转换为
 === 升级
 
 由于技术上的限制，在升级合约到一个新版本后你不能更改合约的**存储布局**。
-
-This means that, if you have already declared a state variable in your contract, you cannot remove it, change its type, or declare another variable before it. In our `Box` example, it means that we can only add new state variables _after_ `value`.
 
 这就意味着，你在合约中声明一个状态变量之后，你不能删除它，也不能更改它的类型或者在它之前声明另外一个状态变量。在我们那个 `Box` 例子中，意味着我们只能在 `value` _之后_ 添加新的变量。
 
