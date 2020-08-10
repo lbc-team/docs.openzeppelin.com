@@ -6,7 +6,7 @@
 | components/learn/modules/ROOT/pages/upgrading-smart-contracts.adoc  |  Ashton |2020/7/21 |  2020/8/4    | Tiny熊  |         | xxx |           |
 | components/learn/modules/ROOT/pages/building-a-dapp.adoc            |  Ashton |2020/8/7 |      | Tiny熊  |         | xxx |           |
 | components/learn/modules/ROOT/pages/developing-smart-contracts.adoc  |  sharonduu |2020/7/21 |2020/8/2  | Tiny熊  |         | xxx |        |
-| components/learn/modules/ROOT/pages/setting-up-a-node-project.adoc  |  sharonduu |2020/8/2 |           | Tiny熊  |         | xxx |        |
+| components/learn/modules/ROOT/pages/setting-up-a-node-project.adoc  |  sharonduu |2020/8/2 |  2020/8/8 | Tiny熊  |         | xxx |        |
 | components/learn/modules/ROOT/pages/deploying-and-interacting.adoc |  sharonduu |2020/8/2 |           | Tiny熊  |         | xxx |        |
 
 
