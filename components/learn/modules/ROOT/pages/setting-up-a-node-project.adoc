@@ -21,9 +21,9 @@ v10.16.3
 
 == 创建npm包
 
-JavaScript软件通常与 _packages_ 相关， https://www.npmjs.com/[npm注册表]。一个包就是一个简单的文件夹，它包含了一个叫做 `package.json` 的文件，描述了包的名字，版本，内容和其他信息。
+JavaScript软件通常打包在 _packages_ 中，通过 https://www.npmjs.com/[npm registry] 分发。一个包就是一个简单的文件夹，它包含了一个叫做 `package.json` 的文件，描述了包的名字，版本，内容和其他信息。
 
-当你开发你自己的项目时就会用到Node的所有安装，包括包含npm注册表的命令行客户端。开始一个新的项目，你只需要创建一个文件夹然后运行：
+所有的Node安装会包含npm注册表的命令行客户端，你可以使用它开发自己的项目，要开始一个新的项目，只需要创建一个文件夹然后运行：
 
 ```console
 $ npm init
