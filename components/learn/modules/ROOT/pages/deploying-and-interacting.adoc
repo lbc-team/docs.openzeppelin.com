@@ -1,76 +1,76 @@
-= Deploying and Interacting with Smart Contracts
+= 部署智能合约并与之交互
 
-Unlike most software, smart contracts don't run on your computer or somebody's server: they live on the Ethereum network itself. This means that interacting with them is a bit different from more traditional applications.
+与大多数软件不同，智能合约不会运行在你的电脑或是别人的服务器上：它们运行在区块链网络上。这意味着与它们交互会和传统应用有很大区别。
 
-This guide will cover all you need to know to get you started using your contracts, including:
+这个指南将会覆盖所有开始使用智能合约时需要知道的事情，包括：
 
- * <<local-blockchain, Setting up a Local Blockchain>>
- * <<getting-started-with-the-cli, Getting Started with the OpenZeppelin CLI>>
- * <<deploying-a-smart-contract, Deploying a Smart Contract>>
- * <<interacting-from-the-command-line, Interacting from the Command Line>>
- * <<interacting-programmatically, Interacting Programmatically>>
+ * <<local-blockchain, 建立一个本地区块链>>
+ * <<getting-started-with-the-cli, 开始使用OpenZeppelin CLI>>
+ * <<deploying-a-smart-contract, 部署一个智能合约>>
+ * <<interacting-from-the-command-line, 使用命令行交互>>
+ * <<interacting-programmatically, 使用编程方式交互>>
 
 [[local-blockchain]]
-== Setting up a Local Blockchain
+== 建立一个本地区块链
 
-Before we begin, we first need an environment where to deploy our contracts. The Ethereum blockchain (often called "mainnet", for "main network") requires spending real money to use it, in the form of Ether (its native currency). This makes it a poor choice when trying out new ideas or tools.
+在我们开始之前，我们首先需要一个部署合约的环境。在以太坊区块链（常称为"主网"，由"main network"而来）上需要花费实际的钱才可以使用Ether（以太坊的加密货币）。在尝试新的想法或工具时，这是一个不好的选择。
 
-To solve this, a number of "testnets" (for "test networks") exist: these include the Ropsten, Rinkeby, and Kovan blockchains. They work very similarly to mainnet, with one difference: you can get Ether for these networks for free, so that using them doesn't cost you a single cent. However, you will still need to deal with private key management, blocktimes in the range of 5 to 20 seconds, and actually getting this free Ether.
+为了解决这个问题，出现了大量的“测试网络”（由"test networks"而来）：包括Ropsten, Rinkeby, 和Kovan blockchains。它们和主网非常相似，只有一点不同：你可以在这些网络上免费获得Ether，所以使用它们就不会花费你一分钱了。但是，您仍然需要管理私钥，出块时间在5到20秒范围内，然后才能获得这些免费的Ether。
 
-During development, it is a better idea to instead use a _local_ blockchain. It runs on your machine, requires no Internet access, provides you with all the Ether that you need, and mines blocks instantly. These reasons also make local blockchains a great fit for xref:writing-automated-tests.adoc#setting-up-a-testing-environment[automated tests].
+在开发过程中，更好的选择是使用 _本地_ 区块链。它运行在你的电脑上，不需要网络接入，可以为你提供你需要的所有Ether，并且可以立刻出块。这些理由也使本地区块链非常适合 xref:writing-automated-tests.adoc#setting-up-a-testing-environment[自动化测试].
 
-TIP: If you want to learn how to deploy and use contracts on a _public_ blockchain, like the Ethereum testnets, head to our xref:connecting-to-public-test-networks.adoc[Connecting to Public Test Networks] guide.
+TIP: 如果您想学习如何在 _公共_ 区块链，如以太坊测试网上部署和使用合约，请查看xref:connecting-to-public-test-networks.adoc[连接到公共测试网络] 指南。
 
-The most popular local blockchain is https://github.com/trufflesuite/ganache-cli[Ganache]. To install it on your project, run:
+最热门的本地区块链是 https://github.com/trufflesuite/ganache-cli[Ganache]。想要为你的项目下载它，运行以下命令：
 
 ```console
 $ npm install --save-dev ganache-cli
 ```
 
-Upon startup, Ganache will create a random set of unlocked accounts and give them Ether. In order to get the same addresses that will be used in this guide, you can start Ganache in deterministic mode:
+启动时，Ganache将创建随机的一组解锁帐户，并为其分配以太币。想要得到与本指南中将使用的地址相同的地址，可以在deterministic模式下启动Ganache：
 
 ```console
 $ npx ganache-cli --deterministic
 ```
 
-Ganache will print out a list of available accounts and their private keys, along with some blockchain configuration values. Most importantly, it will display its address, which we'll use to connect to it. By default, this will be `127.0.0.1:8545`.
+Ganache将输出可用的帐户及其私钥的列表，以及一些区块链配置值。最重要的是，它将显示出它的地址，我们将使用这个地址来连接到它。默认情况下，该值为127.0.0.1:8545。
 
-Keep in mind that every time you run Ganache, it will create a brand new local blockchain - the state of previous runs is **not** preserved. This is fine for short-lived experiments, but it means that you will need to have a window open running Ganache for the duration of these guides. Alternatively, you can run Ganache with the `--db` option, providing a directory to store its data inbetween runs.
+需要记住的是，每次运行Ganache时，都会创建一个全新的本地区块链——先前的运行状态**不**会被保留。这对于短暂的实验来说很好，但这意味着在学习本指南的过程中，你都需要打开一个运行Ganache的窗口。或者，你可以使用 `--db` 选项运行Ganache，提供一个在两次运行之间存储其数据目录。
 
-NOTE: As an alternative to Ganache, you can also run an actual Ethereum node in _https://geth.ethereum.org/getting-started/dev-mode[development] https://wiki.parity.io/Private-development-chain[mode]_. These are a bit more complex to set up, and not as flexible for testing and development, but are more representative of the real network than Ganache.
+NOTE: 作为对Ganache的替换，你可以在 _https://geth.ethereum.org/getting-started/dev-mode[开发] https://wiki.parity.io/Private-development-chain[模块]_ 运行一个真实的以太坊节点。它的设置有点复杂，测试和开发不够灵活，但是比Ganache更能代表实际网络。
 
 [[getting-started-with-the-cli]]
-== Getting Started with the OpenZeppelin CLI
+== 开始使用OpenZeppelin CLI
 
-The low-level details of deploying and interacting with contracts are quite involved, but you won't need to worry about them: the xref:cli::index.adoc[*OpenZeppelin command-line interface (CLI)*] will take care of these processes for you.
+这里包含了智能合约部署和交互的底层细节，但是你不用太过担心： xref:cli::index.adoc[*OpenZeppelin 命令行接口 (CLI)*] 将会为你注意到这些环节。
 
-You may have used the CLI already to xref:developing-smart-contracts.adoc#compiling-solidity-source-code[compile your contracts] - if not, install it now:
+你应该已经在 xref:developing-smart-contracts.adoc#compiling-solidity-source-code[编译智能合约] 中使用过了CLI，如果没有的话，现在下载它：
 
 ```console
 $ npm install --save-dev @openzeppelin/cli
 ```
 
-In order to manage your deployed contracts, you need to create a new CLI project. Do so now, and provide it with a name and version number for your project when prompted:
+为了管理你已经发布的合约，你需要创建一个新的CLI项目。现在就做吧，并且在出现提示时为其提供项目名称和版本号：
 
 ```console
 $ npx openzeppelin init
 ```
 
-NOTE: You can call the OpenZeppelin CLI with both `openzeppelin` and `oz`. For brevity, from here on we'll use the latter.
+NOTE: 你可以称OpenZeppelin CLI为 `openzeppelin` 或者 `oz`。为了准确，下文我们将使用后者。
 
-Two things will happen during initialization. First, an `.openzeppelin` directory will be created, holding project-specific information. This directory will be managed by the CLI: you won't need to manually edit anything. You should however commit xref:cli::configuration.adoc#configuration-files-in-version-control[some of these files] to Git.
+在初始化时会发生两件事情。首先，将会创建一个名为 `.openzeppelin` 的目录，用来存储关于项目的信息。这个目录将会被CLI管理：你不需要手动的编辑任何文件。你应当把 xref:cli::configuration.adoc#configuration-files-in-version-control[其中的一些文件] 提交给Git。
 
-Second, the CLI will store network configuration in a file called `networks.js`. For convenience, it is already populated with an entry called `development`, with configuration matching <<local-blockchain, Ganache>>'s default.
+其次，CLI将会在 `networks.js` 文件中存储网络配置。为了方便起见，配置文件中已经设置了 `development` 这一项，并配置了匹配 <<local-blockchain, Ganache>> 的默认值。
 
-Let's use our first CLI commands to get acquainted with it. We'll begin by querying Ganache for all unlocked accounts:
+来试试我们的第一个CLI命令并熟悉它。我们将会从查询Ganache的所有未锁定帐户开始：
 
 ```console
 $ npx oz accounts
 ```
 
-Unlike `init` and `compile`, the `accounts` command requires a network to run on: the CLI will pick up the entries on the `networks.js` file and prompt you to select one from that list.
+与 `init` 和 `compile` 命令不同， `accounts` 命令需要在网络上运行：CLI将列出 `networks.js` 文件中的选项，并提示你选择一个。
 
-Once you choose `development`, the entry for Ganache, it will print out all available accounts there:
+当你选择了Ganache的 `development` 选项，它将会输出所有可用的账户：
 
 ```console
 $ npx oz accounts
@@ -83,7 +83,7 @@ All:
 ...
 ```
 
-We can also query the balance of these accounts by using the `balance` command:
+我们也可用通过 `balance` 命令查询这些账户的余额：
 
 ```console
 $ npx oz balance
@@ -92,12 +92,12 @@ $ npx oz balance
 Balance: 100 ETH
 ```
 
-This shows why using a local blockchain is so convenient: Ganache has prefunded all of our accounts with 100 Ether, which means we'll be able to send plenty of transactions!
+这就体现了使用本地区块链的便利之处：Ganache给我们所有的账户预存了100Ether，这意味着我们可以发送大量的交易！
 
 [[deploying-a-smart-contract]]
-== Deploying a Smart Contract
+== 部署一个智能合约
 
-With the <<getting-started-with-the-cli, CLI setup complete>>, we're now ready to deploy a contract. We'll be deploying `Box`, from the xref:developing-smart-contracts.adoc#setting-up-a-solidity-project[Writing Smart Contracts] guide. Make sure you have a copy in `contracts/Box.sol`:
+学过了 <<getting-started-with-the-cli, 初始化CLI>>， 我们现在可以部署合约了。我们将要部署在 xref:developing-smart-contracts.adoc#setting-up-a-solidity-project[编写智能合约] 指南中提到的 `Box` 合约。记得要保存一份 `contracts/Box.sol`：
 
 [[box-contract]]
 ```solidity
@@ -109,23 +109,23 @@ pragma solidity ^0.6.0;
 contract Box {
     uint256 private value;
 
-    // Emitted when the stored value changes
+    // 当存储的值发生变化时弹出
     event ValueChanged(uint256 newValue);
 
-    // Stores a new value in the contract
+    // 在合约中存入一个新的值
     function store(uint256 newValue) public {
         value = newValue;
         emit ValueChanged(newValue);
     }
 
-    // Reads the last stored value
+    // 读取最新的值
     function retrieve() public view returns (uint256) {
         return value;
     }
 }
 ```
 
-The OpenZeppelin CLI will guide you through the deployment process, asking for information as needed. Using the `deploy` command, deploy the `Box` contract to the `development` network (<<local-blockchain, Ganache>>), choosing regular when prompted with the kind of deployment:
+OpenZeppelin CLI将会指导你完成部署阶段，询问需要的信息。使用 `deploy` 命令，将 `Box` 合约部署在 `development` 网络上 (<<local-blockchain, Ganache>>)。在提示部署类型时选择常规：
 
 ```console
 $ npx oz deploy
@@ -137,24 +137,24 @@ $ npx oz deploy
 0xe78A0F7E598Cc8b0Bb87894B0F60dD2a88d6a8Ab
 ```
 
-All done! On a real network this process would've taken a couple seconds, but it is instant on local blockchains.
+完成了！在实际的网络上这一步需要花费一些时间，但在本地区块链上立刻就完成了。
 
-TIP: If you got a connection error, make sure you are <<local-blockchain, running Ganache>> in another terminal.
+TIP: 如果报错connection error, 保证你在另一个终端 <<local-blockchain, 运行Ganache>>。
 
-The CLI will keep track of your deployed contracts, but it also displays their addresses after deployment (in our example, `0xe78A0F7E598Cc8b0Bb87894B0F60dD2a88d6a8Ab`). These values will be useful when interacting with them programatically.
+CLI将跟踪你已经部署的合约，同时也会在部署后显示其地址（在我们的例子里，地址是 `0xe78A0F7E598Cc8b0Bb87894B0F60dD2a88d6a8Ab`）。这个值将在我们想要通过编程方式与它交互时派上用场。
 
-NOTE: Remember that local blockchains **do not** persist their state throughout multiple runs! If you close your Ganache process, you'll have to re-deploy your contracts.
+NOTE: 请记住，本地区块链 **不会** 在多次运行中保持它的状态！如果关闭Ganache进程，那么就必须重新部署合约。
 
 [[interacting-from-the-command-line]]
-== Interacting From the Command Line
+== 使用命令行交互
 
-With our `Box` contract <<deploying-a-smart-contract, deployed>>, we can start using it right away from the <<getting-started-with-the-cli, CLI>>.
+在 <<deploying-a-smart-contract, 部署>> 了我们的 `Box` 合约后，我们可以通过 <<getting-started-with-the-cli, CLI>> 来使用它了。
 
-=== Sending Transactions
+=== 发送交易
 
-`Box` 's first function, `store`, receives an integer value and stores it in the contract storage. Because this function _modifies_ the blockchain state, we need to _send a transaction_ to the contract to execute it.
+`Box` 合约的第一个方法，`store`，获取一个整数类型的变量然后把它存入合约存储中。因为这个方法 _改变_ 了区块链的状态，所以我们需要向合约 _发布一个交易_ 来执行它。
 
-This can be achieved with the CLI's `send-tx` command. Pick your `Box` contract when prompted by the CLI, select the `store` function, and choose a numeric value to send to it:
+发布交易可以通过CLI的 `send-tx` 命令实现。在CLI提示时，选择 `Box` 合约，选择  `store` 方法，然后选择要发送给它的值：
 
 ```console
 $ npx oz send-tx
@@ -167,13 +167,13 @@ Events emitted:
  - ValueChanged(5)
 ```
 
-Note how `send-tx` also detected that `Box` emitted a `ValueChanged` event with our newly stored value.
+请留意， `send-tx` 是如何检测到 `Box` 发出了一个 `ValueChanged` 事件并包含了我们新存入的值。
 
-=== Querying State
+=== 查询状态
 
-`Box` 's other function is called `retrieve`, and it returns the integer value stored in the contract. This is a _query_ of blockchain state, so we don't need to send a transaction: a static _call_ will suffice.
+`Box` 的另一个方法为 `retrieve`，它返回存储在合约中的整型变量值。这是一个关于区块链状态的 _查询_ ，所以我们不需要发布交易：使用静态的 _call_ 就足够了。
 
-You may have noticed `send-tx` didn't include `retrieve` in the list of functions to run: this is because queries are run using the `call` command instead:
+你可能注意到了 `send-tx` 的可调用的方法列表中没有包含 `retrieve` ：这是因为查询是使用 `call` 命令执行的：
 
 ```console
 $ npx oz call
@@ -184,28 +184,28 @@ $ npx oz call
 5
 ```
 
-Because `call` doesn't send a transaction, there is no transaction hash to report. This also means that using `call` doesn't cost any Ether, and can be used for free on any network.
+因为 `call` 不会发布一个交易，所以不会返回交易的哈希值。这也意味着使用 `call` 不会花费以太币，在任何网络上都是免费的。
 
-TIP: To learn more about `send-tx` and `call`, check out the xref:cli::commands.adoc[CLI API reference].
+TIP: 想要了解更多关于 `send-tx` 和 `call` 的内容，可用查看 xref:cli::commands.adoc[CLI API参考]。
 
 [[interacting-programmatically]]
-== Interacting Programmatically
+== 使用编程方式交互
 
-The command-line is useful for protyping and running one-off commands. However, eventually you will want to interact with your contracts from your own application, which means calling or sending transaction in code.
+命令行对于原型化和运行一次性的命令很有用。但是，最终你将希望从自己的应用程序中与合约进行交互，这意味着需要以编程的方式调用或发送交易。
 
-In this section, we'll see how to use https://web3js.readthedocs.io/en/1.2.4/[web3.js] to interact with our contracts from JavaScript, and the xref:contract-loader::index.adoc[*OpenZeppelin Contract Loader*] to load them. Let's begin by installing them:
+在本节中，我们将要学习如何使用JavaScript的 https://web3js.readthedocs.io/en/1.2.4/[web3.js] 来与我们的合约交互，并且使用 xref:contract-loader::index.adoc[*OpenZeppelin合约装载*] 来加载它们：
 
 [source,console]
 ----
 $ npm install web3 @openzeppelin/contract-loader
 ----
 
-TIP: Keep in mind that there are many other JavaScript libraries available, and you can use whichever you like the most. Once a contract is deployed, you can interact with it through any library!
+TIP: 要记住的是，还有许多其他JavaScript库可用，你可以使用喜欢的任何一个。合约一旦部署，你就可以通过任何库与之交互！
 
 [[connecting-to-the-network]]
-=== Connecting to the Network
+=== 连接到网络
 
-Let's start coding in a new `src/index.js` file, where we'll be writing our JavaScript script, beginning with some boilerplate for loading the libraries and https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function[writing async code].
+让我们开始在一个新的 `src/index.js` 文件中进行编写代码，在此我们将编写我们的JavaScript脚本，首先是一些用于加载库和 https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function[编写 async代码] 的模板。
 
 [source,js]
 ----
@@ -214,29 +214,29 @@ const Web3 = require('web3');
 const { setupLoader } = require('@openzeppelin/contract-loader');
 
 async function main() {
-  // Our code will go here
+  // 我们的代码写在这里
 }
 
 main();
 ----
 
-We'll first initialize a new `web3` instance. This is an object that holds a connection to a blockchain node, and allows us to send transactions and queries. We'll create one connecting to the <<local-blockchain, local development network>> we started earlier, which is running on localhost port 8545.
+我们将首先初始化一个新的 `web3` 实例。这个对象连接了区块链节点，并允许我们发送交易和查询。我们将创建一个连接到我们之前启动的 <<local-blockchain,本地开发网络>>，该网络运行在localhost的8545端口上。
 
-We can test if the connection works by asking something to the local node, such as the list of enabled accounts:
+我们可以通过向本地节点查询一些信息（例如已启用的帐户列表）来测试连接是否有效：
 
 [source,js]
 ----
-// Set up web3 object, connected to the local development network
+// 建立web3对象, 连接到本地开发网络
 const web3 = new Web3('http://localhost:8545');
 
-// Retrieve accounts from the local node
+// 从本地节点拿到账户
 const accounts = await web3.eth.getAccounts();
 console.log(accounts);
 ----
 
-NOTE: We won't be repeating the boilerplate code on every snippet, but make sure to always code _inside_ the `main` function we defined above!
+NOTE: 我们不会在每个代码片段上都重复模板代码，所以请保证在我们上面定义的 `main` 函数 _内_ 进行编码!
 
-Run the code above using `node`, and check that you are getting a list of available accounts in response.
+使用 `node` 命令运行上面的代码，并且检查你获得的可用账户列表。
 
 [source,console]
 ----
@@ -246,43 +246,43 @@ $ node src/index.js
   ... ]
 ----
 
-These accounts should match the ones you got when you ran `oz accounts` earlier. Now that we have our first code snippet for getting data out of a blockchain, let's start working with our contract.
+这些账户应当和你之前运行 `oz accounts` 命令得到的账户一致。现在我们有了第一个用于从区块链中获取数据的代码段，让我们开始研究合约。
 
 [[getting-a-contract-instance]]
-=== Getting a Contract Instance
+=== 获得一个合约实例
 
-In order to interact with the <<box-contract,`Box`>> contract we <<deploying-a-smart-contract, deployed using the CLI>>, we'll create a new https://web3js.readthedocs.io/en/v1.2.7/web3-eth-contract.html[web3 contract instance] using the xref:contract-loader::index.adoc[*OpenZeppelin Contract Loader*].
+为了与 <<box-contract,`Box`>> 合约进行交互，我们将使用 xref:contract-loader::index.adoc[*OpenZeppelin合约装载*] 来创建一个新的 https://web3js.readthedocs.io/en/v1.2.7/web3-eth-contract.html[web3合约实例]。
 
-A web3 contract instance is a JavaScript object that represents our contract on the blockchain, which we can use to interact with our contract. To create one we need to provide the Contract Loader with the contract name and the address where it was deployed, which the CLI returned when we ran `oz create`.
+一个web3合约实例是一个JavaScript对象，它代表了我们在区块链上的合约，我们可以使用它与合约进行交互。要创建一个合约实例，我们需要给Contract Loader提供合约名称和地址，地址是我们运行 `oz create` 命令返回的值。
 
 [source,js]
 ----
-// Set up web3 object, connected to the local development network, and a contract loader
+// 建立web3对象，连接到本地开发网络和合约装载
 const web3 = new Web3('http://localhost:8545');
 const loader = setupLoader({ provider: web3 }).web3;
 
-// Set up a web3 contract, representing our deployed Box instance, using the contract loader
+// 使用合约装载建立一个web3合约，代表我们发布Box实例
 const address = '0xe78A0F7E598Cc8b0Bb87894B0F60dD2a88d6a8Ab';
 const box = loader.fromArtifact('Box', address);
 ----
 
-NOTE: Make sure to replace the `address` with the one you got when deploying the contract, which may be different to the one shown here.
+NOTE: 请确保将 `address` 替换为部署合约时获得的地址，你的地址可能与例子中的地址不同。
 
-We can now use this JavaScript object to interact with our contract.
+我们现在可以使用这个JavaScript对象来与我们的合约交互了。
 
 [[calling-the-contract]]
-=== Calling the Contract
+=== 调用合约
 
-Let's start by displaying the current value of the `Box` contract. We'll need to https://web3js.readthedocs.io/en/1.0/web3-eth-contract.html#methods-mymethod-call[call] into the `retrieve()` public method of the contract, and https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/await[await] the response:
+让我们以显示 `Box` 合约目前的值开始。我们需要使用 https://web3js.readthedocs.io/en/1.0/web3-eth-contract.html#methods-mymethod-call[call] 方法调用合约的公有方法 `retrieve()` ，使用 https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/await[await] 获取返回值：
 
 [source,js]
 ----
-// Call the retrieve() function of the deployed Box contract
+// 调用已经发布的Box合约的retrieve()方法
 const value = await box.methods.retrieve().call();
 console.log("Box value is", value);
 ----
 
-This snippet is equivalent to the `oz call` we ran earlier from the CLI. Now, make sure everything is running smoothly by running the script again and checking the printed value:
+这段代码的效果与我们之前使用的CLI命令 `oz call` 是一样的。现在确保所有代码能够很好的运行，再一次运行脚本并且查看输出的值：
 
 [source,console]
 ----
@@ -292,35 +292,36 @@ Box value is 5
 
 [WARNING]
 ====
-If you restarted ganache at any point, this script may fail. Restarting ganache clears all local blockchain state, so the `Box` contract instance won't be at the expected address.
+如果你重启过ganache，那么脚本可能会运行失败。重启ganache会清除本地区块链的所有状态，所以 `Box` 合约可能不在原来的地址了。
 
-If this happens, simply <<local-blockchain, start ganache>> and <<deploying-a-smart-contract, redeploy>> the `Box` contract.
+如果发生了这样的事，那么 <<local-blockchain, 启动ganache>> 再 <<deploying-a-smart-contract, 重新部署>> `Box` 合约。
 ====
 
 [[sending-a-transaction]]
-=== Sending a Transaction
+=== 发布交易
 
-We'll now https://web3js.readthedocs.io/en/v1.2.7/web3-eth-contract.html#methods-mymethod-send[send a transaction] to `store` a new value in our Box. Remember that sending a transaction is not as straightforward as making a call: we need to specify who the sender will be, the gas limit, and the gas price we are going to use. To keep this example simple, we'll use a hardcoded value for both gas and gas price, and send the transaction from the first available account on the node.
+我们现在要向我们的Box https://web3js.readthedocs.io/en/v1.2.7/web3-eth-contract.html#methods-mymethod-send[发布一个交易] 来 `store` 一个新的值。要记住的是，发布一个交易不像进行一次调用那么直接：我们需要搞清楚交易的sender，gas limit，和我们要使用的gas price。为了让这个例子更简单，我们将会使用一个硬编码的gas和gas price，并且使用node中的第一个可用的账户来发布交易。
 
-NOTE: In a real-world application, you may want to https://web3js.readthedocs.io/en/v1.2.7/web3-eth-contract.html#methods-mymethod-estimategas[estimate the gas] of your transactions, and check a https://ethgasstation.info/[gas price oracle] to know the optimal values to use on every transaction.
 
-Let's store a value of `20` in our `Box`, and then use the code we had written before to display the updated value:
+NOTE: 在实际应用中，你可能需要 https://web3js.readthedocs.io/en/v1.2.7/web3-eth-contract.html#methods-mymethod-estimategas[估计交易的gas] ，并且查看  https://ethgasstation.info/[gas price oracle] 来获取每个交易最优的gas price值。
+
+让我们将 `20` 这个值存入 `Box` 合约中，然后使用我们之前写的代码来将这个更新的值显示出来：
 
 [source,js]
 ----
-// Retrieve accounts from the local node, we'll use the first one to send the transaction
+// 从本地node获取账户，我们将会使用第一个账户来发布交易
 const accounts = await web3.eth.getAccounts();
 
-// Send a transaction to store() a new value in the Box
+// 发布一个交易来给Box合约store()一个新的值
 await box.methods.store(20)
   .send({ from: accounts[0], gas: 50000, gasPrice: 1e6 });
 
-// Call the retrieve() function of the deployed Box contract
+// 调用Box合约的retrieve()方法
 const value = await box.methods.retrieve().call();
 console.log("Box value is", value);
 ----
 
-We can now run the snippet, and check that the box's value is updated!
+我们现在可以运行这段代码，然后发现box合约的值已经更新了！
 
 [source,console]
 ----
@@ -328,10 +329,10 @@ $ node src/index.js
 Box value is 20
 ----
 
-== Next Steps
+== 下一步
 
-Now that you know how to set up a local blockchain, deploy contracts and interact with them both manually and programmatically, you will need to learn about testing environments, public test networks and going to production:
+现在你知道了如何用手动方式和编程方式来建立一个本地区块链，发布合约和与合约交互。你将要学习测试环境，公共测试网络和实际应用的知识：
 
-* xref:writing-automated-tests.adoc[Writing Automated Tests]
-* xref:connecting-to-public-test-networks.adoc[Connecting to Public Test Networks]
-* xref:preparing-for-mainnet.adoc[Preparing for Mainnet]
+* xref:writing-automated-tests.adoc[编写自动化测试]
+* xref:connecting-to-public-test-networks.adoc[连接到公共测试网络]
+* xref:preparing-for-mainnet.adoc[准备主网]
