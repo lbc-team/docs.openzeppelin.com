@@ -1,46 +1,46 @@
-= Setting Up a Node Project
+= 创建一个Node项目
 
-New software industries often start out with every project sharing the same technology stack. The Ethereum ecosystem is no exception, and the language of choice is https://en.wikipedia.org/wiki/JavaScript[JavaScript]. All of the most used Ethereum libraries, including OpenZeppelin software, are written in JavaScript or one of its variants.
+新软件产业通常始于每个项目共享相同的技术栈。以太坊生态系统也不例外，它选择的语言是 https://en.wikipedia.org/wiki/JavaScript[JavaScript] 。包括OpenZeppelin软件在内的所有最常用的以太坊库都是用JavaScript或其变体编写的。
 
-JavaScript code is traditionally run on a web browser as part of a website, but it can be also executed as a standalone process using https://nodejs.org[Node].
+传统上，JavaScript代码是作为网站的一部分在Web浏览器上运行的，但也可以使用 https://nodejs.org[Node] 作为独立的进程执行。
 
-This guide will help you get your Node development environment set up, which you'll need to use the different OpenZeppelin tools and other third party products.
+这篇指南将会帮助你配置Node开发环境，你在使用不同的OpenZeppelin工具和第三方产品时将会用到这个环境。
 
-TIP: If you are already familiar with Node, npm and Git, feel free to skip this guide!
+TIP: 如果你已经对Node，npm和Git非常熟悉了，那么就直接跳过这篇指南吧！
 
-== Installing Node
+== 下载Node
 
-There are multiple ways to get Node on your machine: you can get it either  via a https://nodejs.org/en/download/package-manager/[package manager] or by downloading https://nodejs.org/en/download/[the installer] directly.
+在你的电脑上获取Node的方法有很多种：你可以通过 https://nodejs.org/en/download/package-manager/[包管理工具] 或者直接下载 https://nodejs.org/en/download/[安装程序] 。
 
-Once you're done, run `node --version` on a terminal to check your installation: any version of the 10.x or 12.x line should be compatible with most Ethereum software.
+完成这些后，在终端运行 `node --version` 来检查你的安装：10.x或12.x系列的任何版本都与大多数以太坊软件兼容。
 
 ```console
 $ node --version
 v10.16.3
 ```
 
-== Creating npm Packages
+== 创建npm包
 
-JavaScript software is often bundled in _packages_, which are distributed via the https://www.npmjs.com/[npm registry]. A package is simply a directory that contains a file called `package.json`, describing the package's name, version, content, and others.
+JavaScript软件通常打包在 _packages_ 中，通过 https://www.npmjs.com/[npm registry] 分发。一个包就是一个简单的文件夹，它包含了一个叫做 `package.json` 的文件，描述了包的名字，版本，内容和其他信息。
 
-All Node installations include a command-line client for the npm registry, which you'll use while developing your own projects. To start a new project, create a directory for it and run:
+所有的Node安装会包含npm注册表的命令行客户端，你可以使用它开发自己的项目，要开始一个新的项目，只需要创建一个文件夹然后运行：
 
 ```console
 $ npm init
 ```
 
-Simple as that! Your newly created `package.json` file will evolve as your project grows, such as when installing dependencies with `npm install`.
+就是这么简单！你已经新建的 `package.json` 文件将会随着项目的进展而扩展，就比如你使用 `npm install` 来下载依赖的时候。
 
-TIP: JavaScript and npm are some of the most used software tools in the world: if you're ever in doubt, you'll find plenty of information about them online.
+TIP: JavaScript和npm是世界上最常用的软件工具：如果您有疑问，可以在网上找到很多有关它们的信息。
 
 [[using-npx]]
-=== Using `npx`
+=== 使用 `npx`
 
-There are two broads type of packages stored in the npm registry: _libraries_ and _executables_. Installed libraries are used like any other piece of JavaScript code, but executables are special.
+npm注册表中存储了两种广义的软件包： _libraries_ 和 _executables_。已安装的库的用法与其他JavaScript代码一样，但是可执行文件是特殊的。
 
-A third binary was included when installing node: https://blog.npmjs.org/post/162869356040/introducing-npx-an-npm-package-runner[`npx`]. This is used to run executables installed locally in your project.
+当下载node时会包含第三方库： https://blog.npmjs.org/post/162869356040/introducing-npx-an-npm-package-runner[`npx`]。它会用于运行项目内安装的可执行文件。
 
-Some OpenZeppelin tools (like the xref:cli::index.adoc[CLI]) are executables intended to be run using `npx`. Not including `npx` will cause errors due to the binary not being in the system path, so for clarity we'll display the full command in our guides:
+一些OpenZeppelin工具（例如 xref:cli::index.adoc[CLI]）只有在使用 `npx` 时才可以运行。不包含 `npx` 时将会导致错误，因为命令没有包含在系统的环境变量中，所以为了更明确，我们将会在指南中展示完整的命令：
 
 ```console
 $ openzeppelin init
@@ -49,12 +49,12 @@ $ npx openzeppelin init
 Welcome to the OpenZeppelin SDK!
 ```
 
-WARNING: Make sure you are inside your project's directory when running `npx`! Otherwise, it will download the full executable again just to run that command, which most of the time is _not_ what you want.
+WARNING: 运行 `npx` 时，请确保您在项目目录中！否则，它将只是为了运行该命令而再次下载完整的可执行文件，这很可能 _不_ 是您想要的。
 
-== Tracking With Version Control
+== 使用版本控制跟踪
 
-Before you get coding, you should add https://en.wikipedia.org/wiki/Version_control[version control software] to your project to track changes.
+在开始编写代码之前，您应该添加为项目添加 https://en.wikipedia.org/wiki/Version_control[版本控制软件] 来跟踪变化。
 
-By far, the most used tool is https://git-scm.com[Git], often in conjunction with https://github.com[GitHub] for hosting purposes. Indeed, you will find the full source code and history of all OpenZeppelin software in our https://github.com/OpenZeppelin[GitHub repository].
+目前，使用最多的工具是 https://git-scm.com[Git]，通常与 https://github.com[GitHub] 一起使用以进行托管。实际上，你可以在我们的 https://github.com/OpenZeppelin[GitHub 仓库] 中找到所有OpenZeppelin软件的完整源代码和历史。
 
-TIP: If you've never used Git before, a good starting place is the https://guides.github.com/introduction/git-handbook/[Git Handbook].
+TIP: 如果你之前没有使用过Git，可以从 https://guides.github.com/introduction/git-handbook/[Git Handbook] 开始。
