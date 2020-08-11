@@ -1,6 +1,6 @@
 = 部署智能合约并与之交互
 
-与大多数软件不同，智能合约不会运行在你的电脑或是别人的服务器上：它们运行在区块链网络上。这意味着与它们交互会和传统应用有很大区别。
+与大多数软件不同，智能合约不会运行在你的电脑或是某人的服务器上：它们运行在区块链网络上。这意味着与它们交互会和传统应用有很大区别。
 
 这个指南将会覆盖所有开始使用智能合约时需要知道的事情，包括：
 
@@ -13,13 +13,13 @@
 [[local-blockchain]]
 == 建立一个本地区块链
 
-在我们开始之前，我们首先需要一个部署合约的环境。在以太坊区块链（常称为"主网"，由"main network"而来）上需要花费实际的钱才可以使用Ether（以太坊的加密货币）。在尝试新的想法或工具时，这是一个不好的选择。
+在我们开始之前，我们首先需要一个部署合约的环境。在以太坊区块链（常称为"主网"，由"main network"而来）上需要花费真实的钱，以Ether （以太币，以太坊上原生货币）的形式。在尝试新的想法或工具时，这是一个不好的选择。
 
-为了解决这个问题，出现了大量的“测试网络”（由"test networks"而来）：包括Ropsten, Rinkeby, 和Kovan blockchains。它们和主网非常相似，只有一点不同：你可以在这些网络上免费获得Ether，所以使用它们就不会花费你一分钱了。但是，您仍然需要管理私钥，出块时间在5到20秒范围内，然后才能获得这些免费的Ether。
+为了解决这个问题，出现了大量的“测试网络”（由"test networks"而来）：包括Ropsten, Rinkeby, 和Kovan blockchains。它们和主网非常相似，只有一点不同：你可以在这些网络上免费获得Ether，所以使用它们就不会花费你一分钱了。但是，您仍然需要管理私钥，出块时间在5到20秒范围内，以及使用免费获得的也太币。
 
 在开发过程中，更好的选择是使用 _本地_ 区块链。它运行在你的电脑上，不需要网络接入，可以为你提供你需要的所有Ether，并且可以立刻出块。这些理由也使本地区块链非常适合 xref:writing-automated-tests.adoc#setting-up-a-testing-environment[自动化测试].
 
-TIP: 如果您想学习如何在 _公共_ 区块链，如以太坊测试网上部署和使用合约，请查看xref:connecting-to-public-test-networks.adoc[连接到公共测试网络] 指南。
+TIP: 如果你想学习如何在 _公共_ 区块链，如以太坊测试网上部署和使用合约，请查看xref:connecting-to-public-test-networks.adoc[连接到公共测试网络] 指南。
 
 最热门的本地区块链是 https://github.com/trufflesuite/ganache-cli[Ganache]。想要为你的项目下载它，运行以下命令：
 
@@ -33,7 +33,7 @@ $ npm install --save-dev ganache-cli
 $ npx ganache-cli --deterministic
 ```
 
-Ganache将输出可用的帐户及其私钥的列表，以及一些区块链配置值。最重要的是，它将显示出它的地址，我们将使用这个地址来连接到它。默认情况下，该值为127.0.0.1:8545。
+Ganache将输出可用的帐户及其私钥的列表，以及一些区块链配置值。最重要的是，它将显示其（节点）的地址，我们将使用这个地址来连接到它。默认情况下，该值为127.0.0.1:8545。
 
 需要记住的是，每次运行Ganache时，都会创建一个全新的本地区块链——先前的运行状态**不**会被保留。这对于短暂的实验来说很好，但这意味着在学习本指南的过程中，你都需要打开一个运行Ganache的窗口。或者，你可以使用 `--db` 选项运行Ganache，提供一个在两次运行之间存储其数据目录。
 
@@ -109,7 +109,7 @@ pragma solidity ^0.6.0;
 contract Box {
     uint256 private value;
 
-    // 当存储的值发生变化时弹出
+    // 当存储的值发生变化时触发该事件
     event ValueChanged(uint256 newValue);
 
     // 在合约中存入一个新的值
@@ -125,7 +125,7 @@ contract Box {
 }
 ```
 
-OpenZeppelin CLI将会指导你完成部署阶段，询问需要的信息。使用 `deploy` 命令，将 `Box` 合约部署在 `development` 网络上 (<<local-blockchain, Ganache>>)。在提示部署类型时选择常规：
+OpenZeppelin CLI将会指导你完成部署过程，询问需要的信息。使用 `deploy` 命令，将 `Box` 合约部署在 `development` 网络上 (<<local-blockchain, Ganache>>)。在提示部署类型时选择常规（regular）：
 
 ```console
 $ npx oz deploy
@@ -139,7 +139,7 @@ $ npx oz deploy
 
 完成了！在实际的网络上这一步需要花费一些时间，但在本地区块链上立刻就完成了。
 
-TIP: 如果报错connection error, 保证你在另一个终端 <<local-blockchain, 运行Ganache>>。
+TIP: 如果报错connection error, 确保你在另一个终端 <<local-blockchain, 运行Ganache>>。
 
 CLI将跟踪你已经部署的合约，同时也会在部署后显示其地址（在我们的例子里，地址是 `0xe78A0F7E598Cc8b0Bb87894B0F60dD2a88d6a8Ab`）。这个值将在我们想要通过编程方式与它交互时派上用场。
 
@@ -193,7 +193,7 @@ TIP: 想要了解更多关于 `send-tx` 和 `call` 的内容，可用查看 xref
 
 命令行对于原型化和运行一次性的命令很有用。但是，最终你将希望从自己的应用程序中与合约进行交互，这意味着需要以编程的方式调用或发送交易。
 
-在本节中，我们将要学习如何使用JavaScript的 https://web3js.readthedocs.io/en/1.2.4/[web3.js] 来与我们的合约交互，并且使用 xref:contract-loader::index.adoc[*OpenZeppelin合约装载*] 来加载它们：
+在本节中，我们将要学习如何使用JavaScript的 https://web3js.readthedocs.io/en/1.2.4/[web3.js] 来与我们的合约交互，并且使用 xref:contract-loader::index.adoc[*OpenZeppelin合约装载器（OpenZeppelin Contract Loader）*] 来加载它们：
 
 [source,console]
 ----
@@ -205,7 +205,7 @@ TIP: 要记住的是，还有许多其他JavaScript库可用，你可以使用�
 [[connecting-to-the-network]]
 === 连接到网络
 
-让我们开始在一个新的 `src/index.js` 文件中进行编写代码，在此我们将编写我们的JavaScript脚本，首先是一些用于加载库和 https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function[编写 async代码] 的模板。
+让我们开始在一个新的 `src/index.js` 文件中进行编写代码，在此我们将编写JavaScript脚本，首先是一些用于加载库和 https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function[编写 async代码] 的模板。
 
 [source,js]
 ----
@@ -251,9 +251,9 @@ $ node src/index.js
 [[getting-a-contract-instance]]
 === 获得一个合约实例
 
-为了与 <<box-contract,`Box`>> 合约进行交互，我们将使用 xref:contract-loader::index.adoc[*OpenZeppelin合约装载*] 来创建一个新的 https://web3js.readthedocs.io/en/v1.2.7/web3-eth-contract.html[web3合约实例]。
+为了与 <<box-contract,`Box`>> 合约进行交互，我们将使用 xref:contract-loader::index.adoc[*OpenZeppelin合约装载器*] 来创建一个新的 https://web3js.readthedocs.io/en/v1.2.7/web3-eth-contract.html[web3合约实例]。
 
-一个web3合约实例是一个JavaScript对象，它代表了我们在区块链上的合约，我们可以使用它与合约进行交互。要创建一个合约实例，我们需要给Contract Loader提供合约名称和地址，地址是我们运行 `oz create` 命令返回的值。
+一个web3合约实例是一个JavaScript对象，它代表了我们在区块链上的合约，我们可以使用它与合约进行交互。要创建一个合约实例，我们需要给合约装载器提供合约名称和地址，地址是我们运行 `oz create` 命令返回的值。
 
 [source,js]
 ----
@@ -261,14 +261,14 @@ $ node src/index.js
 const web3 = new Web3('http://localhost:8545');
 const loader = setupLoader({ provider: web3 }).web3;
 
-// 使用合约装载建立一个web3合约，代表我们发布Box实例
+// 使用合约装载器建立一个web3合约，代表我们发布Box实例
 const address = '0xe78A0F7E598Cc8b0Bb87894B0F60dD2a88d6a8Ab';
 const box = loader.fromArtifact('Box', address);
 ----
 
 NOTE: 请确保将 `address` 替换为部署合约时获得的地址，你的地址可能与例子中的地址不同。
 
-我们现在可以使用这个JavaScript对象来与我们的合约交互了。
+我们现在可以使用这个JavaScript对象来与合约交互了。
 
 [[calling-the-contract]]
 === 调用合约
