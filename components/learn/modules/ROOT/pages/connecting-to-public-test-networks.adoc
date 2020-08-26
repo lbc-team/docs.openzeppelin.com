@@ -1,55 +1,55 @@
-= Connecting to Public Test Networks
+= 连接到公共测试网络
 
-After you have xref:developing-smart-contracts.adoc[written your contracts], and xref:deploying-and-interacting.adoc[tried them out locally] and xref:writing-automated-tests.adoc[tested them thoroughly], it's time to move to a persistent public testing environment, where you and your beta users can start interacting with your application.
+当完成了 xref:developing-smart-contracts.adoc[编写智能合约]， xref:deploying-and-interacting.adoc[在本地区块链上使用]，并且 xref:writing-automated-tests.adoc[完成彻底的测试] 之后，就可以转移到持久的公共测试环境上了，你和测试用户可以与应用程序进行交互。
 
-We will use *public testing networks* (aka _testnets_) for this, which are networks that operate similar to the main Ethereum network, but where Ether has no value and is free to acquire - making them ideal for testing your contracts at no cost.
+我们将要使用 *公共测试网络* (aka _testnets_) ，它的运作方式与以太坊主网类似，但是测试网络上的以太币是没有价值的，并且可以免费获取-这使得测试网络成为免费测试合约的最佳选择。
 
-In this guide, we will pick up our xref:deploying-and-interacting.adoc#box-contract[beloved `Box` contract], and deploy it to a testnet, while learning:
+在本指南中，我们将要拿出 xref:deploying-and-interacting.adoc#box-contract[“心爱的” `Box` 合约] ，并把它发布在测试网络上，同时学习：
 
-* <<testnet-list, What test networks are available>>
-* <<connecting-project-to-network, How to set up your OpenZeppelin project for working on a testnet>>
-* <<working-on-testnet, How to deploy and interact with your testnet contract instances>>
+* <<testnet-list, 可以使用哪些测试网络>>
+* <<connecting-project-to-network, 配置OpenZeppelin项目以便于在测试网络上运行>>
+* <<working-on-testnet, 怎样部署测试网络上的合约实例并与之交互>>
 
-Remember that deploying to a public test network is a necessary step when developing an Ethereum project. They provide a safe environment for testing that closely mimics the main network - you don't want to take out your project for a test drive in a network where mistakes will cost you money!
+要记住的是，在开发以太坊项目时，部署到公共测试网络是必要的步骤。它们与主网很像，可以为测试提供安全的环境-那么你一定不希望在出错时需要花钱的网络中测试你的项目！
 
 [[testnet-list]]
-== Available Testnets
+== 可用的测试网络
 
-There are four test networks available for you to choose, each with their own characteristics:
+有四个可供你选择的测试网络，每个都有它们的特点：
 
 [horizontal]
-Ropsten:: The only proof-of-work testnet. It has unpredictable block times and frequent chain reorganizations. At the same time, it is the chain that most closely resembles mainnet. (id=3)
-Rinkeby:: A proof-of-authority network. This means that new blocks are added by a set of pre-defined trusted nodes, instead of by whichever miner provides a proof-of-work. It only works with Geth clients, and has 15-second block times. (id=4)
-Kovan:: Another proof-of-authority network, but this one runs only with Parity clients, and has 4-second block times. (id=42)
-Goerli:: Also a proof-of-authority network, but compatible with both Geth and Parity clients, with 15-second block times. (id=6)
+Ropsten:: 唯一使用工作量证明的测试网络。它的出块时间不可预测，并且区块链会频繁重组。但同时，它也是最接近主网的测试链。(id=3)
+Rinkeby:: 权威证明网络。这意味着新区块是由一组预定义的受信任节点添加的，而不是由任何提供工作量证明的矿工添加的。它仅适用于Geth客户端，并且出块时间为15秒。(id=4)
+Kovan:: 另一个权威证明网络，但是只在Parity客户端运行，出块时间为4秒。(id=42)
+Goerli:: 也是一个权威证明网络，但与Geth和Parity客户端同时兼容，出块时间为15秒。(id=6)
 
-NOTE: Each network is identified by a numeric ID. Local networks usually have a large random value, while id=1 is reserved for the main Ethereum network.
+NOTE: 每个网络均由数字ID标识。本地网络通常使用一个较大的随机值作为网络ID，而id = 1为以太坊主网保留。
 
-It is up to you whether you want to test in Ropsten's unpredictable environment to assess how robust your application is, or a more reliable one to simplify the testing experience.
+你可以自己决定是否要在Ropsten的不可预测的环境中测试应用程序的健壮性，或者是选择一种更可靠的方式来简化测试。
 
 [[connecting-project-to-network]]
-== Connecting a Project to a Public Network
+== 把项目连接到公共网络
 
-To connect our OpenZeppelin project to a public testnet, we will need to:
+想要把我们的OpenZeppelin项目连接到公共测试网络，我们需要：
 
-  . <<accessing-a-testnet-node, Get hold of a testnet node>>
-  . <<creating-a-new-account, Create a new account>>
-  . <<configuring-the-network, Update our networks configuration file>>
-  . <<finding-a-testnet-account, Fund our testing account>>
+  . <<accessing-a-testnet-node, 进入测试网络节点>>
+  . <<creating-a-new-account, 创建一个新账户>>
+  . <<configuring-the-network, 更新网络配置文件>>
+  . <<finding-a-testnet-account, 给测试账户充值>>
 
 [[accessing-a-testnet-node]]
-=== Accessing a Testnet Node
+=== 进入测试网络节点
 
-While you can spin up your own https://github.com/ethereum/go-ethereum/wiki/Command-Line-Options[Geth] or https://wiki.parity.io/Chain-specification[Parity] node connected to a testnet, the easiest way to access a testnet is via a public node service such as https://infura.io[Infura]. Infura provides access to public nodes for all testnets and the main network, via both free and paid plans.
+当你将 https://github.com/ethereum/go-ethereum/wiki/Command-Line-Options[Geth] 环境运行起来，或是通过 https://wiki.parity.io/Chain-specification[Parity] 节点连接到测试网络后，最简单的连接测试网络方式就是通过一个公共节点服务，例如 https://infura.io[Infura]。Infura提供对所有测试网和主网络的公共节点的访问服务，包括付费和免费两种方式。
 
-NOTE: We say a node is _public_ when it can be accessed by the general public, and manages no accounts. This means that it can reply to queries and relay signed transactions, but cannot sign transactions on its own.
+NOTE: 只要一个节点可以被公众访问，并且不管理任何帐户，那么我们说它是 _公共的_。这意味着它可以响应查询和已签名交易，但不能验证自己签名的交易。
 
-Head over to Infura or a public node provider of your choice, sign up, and jot down your assigned project ID - we will use it later to connect to the network.
+使用Infura或你选择的公共节点提供商，进行注册并记下为你分配的项目ID-我们稍后将使用它来连接到网络。
 
 [[creating-a-new-account]]
-=== Creating a New Account
+=== 创建一个新账户
 
-To send transactions in a testnet, you will need a new Ethereum account. There are many ways to do this: here we will use the `mnemonics` package, which will output a fresh mnemonic (a set of 12 words) we will use to derive our accounts:
+为了向测试网络发送交易，你将需要一个新的以太坊账户。有很多方法可以得到账户：这里我们将使用 `mnemonics` 包，它将输出一个新的助记符（一组12个单词），我们将使用它们来导出帐户：
 
 [source,console]
 ----
@@ -57,23 +57,23 @@ $ npx mnemonics
 pioneer tent curve wild ...
 ----
 
-WARNING: Make sure to keep your mnemonic secure. Even if it is just for testing purposes, there are still malicious users out there who will wreak havoc on your testnet deployment for fun!
+WARNING: 要保证助记符的安全。即使我们只是为了测试，仍然会有恶意用户在你的测试网络上造成破坏，以求取乐！
 
 [[configuring-the-network]]
-=== Configuring the Network
+=== 配置网络
 
-Since we are using public nodes, we will need to sign all our transactions locally. We will use `@truffle/hdwallet-provider` to do this, setting it up with our mnemonic. We will also tell the provider how to connect to the test network by using the Infura endpoint.
+由于我们使用了公共节点，因此我们需要在本地签署所有交易。我们将使用 `@truffle/hdwallet-provider` 进行这个操作，并使用助记符对其进行设置。我们还将告诉提供商如何使用Infura终端连接到测试网络。
 
-NOTE: This part assumes you have already set up a new OpenZeppelin project. If you haven't, run `oz init` or head over to the guide on xref:deploying-and-interacting.adoc#getting-started-with-the-cli[getting started with the CLI].
+NOTE: 这部分假设你已经建立了一个新的OpenZeppelin项目。如果你还没有，那么运行 `oz init` 命令或者查看这个指南 xref:deploying-and-interacting.adoc#getting-started-with-the-cli[开始使用CLI].
 
-Let's start by installing the provider:
+让我们先从下载提供商开始：
 
 [source,console]
 ----
 $ npm install --save-dev @truffle/hdwallet-provider
 ----
 
-Then, we will update our `networks.js` file with a new connection to the testnet. Here we will use Rinkeby, but you can use whichever you want:
+然后我们将要更新 `networks.js` 文件中的测试网络连接。这里我们将会使用Rinkeby，你也可以使用任何你想用的网络：
 
 [source,diff]
 ----
@@ -96,9 +96,9 @@ Then, we will update our `networks.js` file with a new connection to the testnet
  };
 ----
 
-NOTE: See the `HDWalletProvider` https://github.com/trufflesuite/truffle/tree/master/packages/hdwallet-provider[documentation] for information on configuration options.
+NOTE: 查看 `HDWalletProvider` 的 https://github.com/trufflesuite/truffle/tree/master/packages/hdwallet-provider[文档] 来获取配置选项的信息。
 
-Note in the first line that we are loading the project id and mnemonic from a `secrets.json` file, which should look like the following, but using your own values. Make sure to `.gitignore` it!
+注意要在 `secrets.json` 文件的第一行写入项目id和助记符。写入的内容应该和下面的类似，不过要使用你自己的值。记得运行 `.gitignore` 命令！
 
 [source,json]
 ----
@@ -108,9 +108,9 @@ Note in the first line that we are loading the project id and mnemonic from a `s
 }
 ----
 
-TIP: Instead of a `secrets.json` file, you can use whatever secret-management solution you like for your project. A popular and simple option is to use https://github.com/motdotla/dotenv[`dotenv`] for injecting secrets as environment variables.
+TIP: 除了 `secrets.json` 文件，你还可以在项目中使用任何你喜欢的密码管理方案。一个简单常用的选择是使用 https://github.com/motdotla/dotenv[`dotenv`] 将密码作为环境变量。
 
-We can now test out that this configuration is working by listing the accounts we have available for the Rinkeby network. Remember that yours will be different, as they depend on the mnemonic you used.
+我们现在可以通过列出Rinkeby网络中可用的账户来测试配置文件。你的输出将会与下面的不同，这取决于你使用的助记符。
 
 [source,console]
 ----
@@ -126,7 +126,7 @@ All:
 ...
 ----
 
-We can also test the connection to the Infura node, by querying our account balance.
+我们还要通过查询账户余额来测试是否连接到Infura节点。
 
 [source,console]
 ----
@@ -137,19 +137,20 @@ Balance: 0 ETH
 0
 ----
 
-Empty! This points to our next task: getting testnet funds so that we can send transactions.
+余额是空的！这就是我们的下一个任务：获取测试网络中的资金，这样我们就可以发布交易了。
 
 [[finding-a-testnet-account]]
-=== Funding the Testnet Account
+=== 给测试网络中的账户充值
 
-Most public testnets have a faucet: a site that will provide you with a small amount of test Ether for free. If you are on Rinkeby, head on to the https://faucet.rinkeby.io/[Rinkeby Authenticated Faucet] to get funds by authenticating with your Twitter or Facebook account. Alternatively, you can also use https://faucet.metamask.io/[MetaMask's faucet] to ask for funds directly to your MetaMask accounts.
+大多数公共测试网络都有faucet：一个可以免费为你提供一小笔测试以太币的网站。如果你使用Rinkeby，那么在 https://faucet.rinkeby.io/[Rinkeby Authenticated Faucet] 上授权Twitter或者Facebook账户，就可以获取资金。或者，你可以使用 https://faucet.metamask.io/[MetaMask's faucet] 来直接向你的MetaMask账户中转入资金。
 
-Armed with a funded account, let's deploy our contracts to the testnet!
+有了一个有资金的账户，让我们在测试网络上发布合约吧！
 
 [[working-on-testnet]]
-== Working on a Testnet
+== 使用测试网络
 
-With a project configured to work on a public testnet, we can now finally xref::deploying-and-interacting.adoc#box-contract[deploy our `Box` contract]. The command here is exactly the same as if you were on your xref::deploying-and-interacting.adoc#local-blockchain[local development network], though it will take a few seconds to run as new blocks are mined.
+使用一个配置好可以在公共测试网络上运行的项目，我们现在终于可以 xref::deploying-and-interacting.adoc#box-contract[部署 `Box` 合约]。这里的命令和之前 xref::deploying-and-interacting.adoc#local-blockchain[本地开发网络] 中的很像，运行后将要等待一段时间直到新块被挖出。
+
 
 [source,console]
 ----
@@ -162,13 +163,13 @@ $ npx oz deploy
 0xA1a05372ECD1353105543ee46C8AA447547C6680
 ----
 
-That's it! Your `Box` contract instance will be forever stored in the testnet, and publicly accessible to anyone. The OpenZeppelin CLI will keep track of this and all your deployed contracts in `.openzeppelin/rinkeby.json`, so you can easily refer to them later, such as when upgrading or interacting with them.
+可以啦！你的 `Box` 合约实例将会永远存储在测试网络上，并且任何人都可以公开访问。OpenZeppelin CLI将会在 `.openzeppelin/rinkeby.json` 文件中跟踪它和所有你发布的合约。以后你希望更新合约或者与合约交互时，将会很容易找到它们。
 
-You can see your contract on a block explorer such as https://etherscan.io/[Etherscan]. Remember to access the explorer on the testnet where you deployed your contract, such as https://rinkeby.etherscan.io[rinkeby.etherscan.io] for Rinkeby.
+你可以在区块链浏览器 https://etherscan.io/[Etherscan] 中找到你的合约。记得进入你所发布合约的测试网络浏览器，例如在使用Rinkeby就可以在 https://rinkeby.etherscan.io[rinkeby.etherscan.io] 中查询。
 
-TIP: You can check out the contract we deployed in the example above, along with all transactions sent to it, https://rinkeby.etherscan.io/address/0xA1a05372ECD1353105543ee46C8AA447547C6680[here].
+TIP: 你可以检查例子中部署的合约以及发送给它的所有交易， https://rinkeby.etherscan.io/address/0xA1a05372ECD1353105543ee46C8AA447547C6680[在这里]。
 
-You can also interact with your instance as you regularly would, either using the `call` and `send-tx` xref::deploying-and-interacting.adoc#interacting-from-the-command-line[CLI commands], or xref::deploying-and-interacting.adoc#interacting-programatically[programmatically using `web3`]. You can also xref:upgrading-smart-contracts.adoc[upgrade your contracts] via `oz upgrade` as you add new features to your staging project!
+你也可以像往常一样与合约实例进行交互，通过使用 xref::deploying-and-interacting.adoc#interacting-from-the-command-line[CLI 命令]中的 `call` 和 `send-tx`，或者 xref::deploying-and-interacting.adoc#interacting-programatically[使用web3用编程的方式与合约交互]。你还可以使用 `oz upgrade` 命令xref:upgrading-smart-contracts.adoc[升级你的合约]，例如为你已经发布的合约增加一些新的特征。
 
 [source,console]
 ----
@@ -182,8 +183,8 @@ Events emitted:
  - ValueChanged(42)
 ----
 
-Keep in mind that every transaction will cost some gas, so you will eventually need to top up your account with more funds.
+要记住每一个交易都会花费gas，所以你最终需要给账户中充值更多的资金。
 
-== Next Steps
+== 下一步
 
-After thoroughly testing your application on a public testnet, you are ready for the last step on the development journey: xref:preparing-for-mainnet.adoc[deploying your application in production].
+在公共测试网络上完整的测试了你的应用后，你就可以进入开发的最后一步了：xref:preparing-for-mainnet.adoc[在生产环境中部署你的应用].
