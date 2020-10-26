@@ -33,7 +33,7 @@ NOTE: 如果你已经阅读了 xref:deploying-and-interacting.adoc#local-blockch
 $ npm install --save-dev @openzeppelin/test-environment
 ```
 
-一旦你 `require` 了自己的JavaScript代码库，它将会自动运行一个本地测试链。它将会输出一个账户列表，列表中的账户都预先充值了Ether。还会列出通过编译后的文件和通过其他实体来加载合约的简便方法。
+一旦你 `require` 了自己的JavaScript代码库，它将会自动运行一个本地测试链。它将会输出一个账户列表，列表中的账户都预先充值了Ether。还会列出通过编译后的文件和通过其他帮助工具（函数）来加载合约的简便方法。
 
 ```javascript
 const { accounts, contract } = require('@openzeppelin/test-environment');
