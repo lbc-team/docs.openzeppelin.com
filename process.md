@@ -9,7 +9,7 @@
 | components/learn/modules/ROOT/pages/setting-up-a-node-project.adoc  |  sharonduu |2020/8/2 |  2020/8/8 | Tiny熊  |         | xxx |        |
 | components/learn/modules/ROOT/pages/deploying-and-interacting.adoc |  sharonduu |2020/8/2 |   2020/8/10 | Tiny熊  |         | xxx |        |
 | components/learn/modules/ROOT/pages/connecting-to-public-test-networks.adoc |  sharonduu |2020/8/11 |2020/8/26   | Tiny熊  |         | xxx |        |
-| components/learn/modules/ROOT/pages/writing-automated-tests.adoc |  sharonduu |2020/8/11 |    | Tiny熊  |         | xxx |        |
+| components/learn/modules/ROOT/pages/writing-automated-tests.adoc |  sharonduu |2020/8/11 |  2020/10/26  |  |         | xxx |        |
 
 
 学分统计方法：
